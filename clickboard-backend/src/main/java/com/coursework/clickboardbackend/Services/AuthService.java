@@ -52,7 +52,7 @@ public class AuthService{
                 }
                 user = userService.getByUsername(request.getUsername());
                 userDetails = userService.loadUserByUsername(user.getUsername());
-                return new UserTokenDTO(jwtUtil.generateToken(userDetails), user.getUsername(), true, "token", user.isChildModeEnabled(), isVk);
+                return new UserTokenDTO(jwtUtil.generateToken(userDetails), user.getUsername(), true, "token", isVk);
             } catch (Exception e) {
                 throw new CompletionException(new BadCredentialsException(e.getMessage()));
             }

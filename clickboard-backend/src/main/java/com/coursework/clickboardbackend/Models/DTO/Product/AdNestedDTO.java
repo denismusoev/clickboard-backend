@@ -1,6 +1,6 @@
-package com.coursework.clickboardbackend.Models.DTO.Ad;
+package com.coursework.clickboardbackend.Models.DTO.Product;
 
-import com.coursework.clickboardbackend.Models.Database.Ad.Ad;
+import com.coursework.clickboardbackend.Models.Database.Product.Ad;
 
 public class AdNestedDTO {
     private int id;

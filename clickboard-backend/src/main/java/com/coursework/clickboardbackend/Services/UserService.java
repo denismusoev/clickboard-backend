@@ -4,7 +4,6 @@ import com.coursework.clickboardbackend.Models.DTO.User.ApiResponse;
 import com.coursework.clickboardbackend.Models.DTO.User.SignUpDTO;
 import com.coursework.clickboardbackend.Models.DTO.User.UpdateSettingsDTO;
 import com.coursework.clickboardbackend.Models.DTO.User.UserUpdateDTO;
-import com.coursework.clickboardbackend.Models.Database.ShoppingCart.ShoppingCart;
 import com.coursework.clickboardbackend.Models.Database.User.User;
 import com.coursework.clickboardbackend.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -35,7 +34,7 @@ public class UserService implements UserDetailsService {
     @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public void registerUser(SignUpDTO signUpDTO) {
         User newUser = new User();
@@ -53,12 +52,6 @@ public class UserService implements UserDetailsService {
         newUser.setUsername(signUpDTO.getUsername());
         newUser.setPassword(new BCryptPasswordEncoder().encode(signUpDTO.getPassword()));
         userRepository.save(newUser);
-    }
-
-    public ShoppingCart getShopCartByUsername(String username) throws Exception {
-        Optional<User> findUser = userRepository.findByUsername(username);
-        User user = findUser.orElseThrow(() -> new Exception("Не удалось загрузить данные корзины"));
-        return user.getShoppingCart();
     }
 
     public void update(User user) throws Exception {
@@ -105,82 +98,6 @@ public class UserService implements UserDetailsService {
         }
         throw new BadCredentialsException("Неверный пароль");
 
-    }
-
-    public ApiResponse changePassword(PasswordUpdateDTO passwordUpdateDTO) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Не удалось обновить пароль"));
-        if (passwordEncoder.matches(passwordUpdateDTO.getOldPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(passwordUpdateDTO.getNewPassword()));
-            update(user);
-            return new ApiResponse(true, "Пароль успешно изменен"){};
-        }
-        throw new BadCredentialsException("Неверный пароль");
-    }
-
-    public ApiResponse settingChildMode(UpdateSettingsDTO updateSettingsDTO) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Не удалось настроить детский режим"));
-        if (passwordEncoder.matches(updateSettingsDTO.getPassword(), user.getPassword())) {
-            ApiResponse apiResponse = new ApiResponse(true, ""){};
-            if (user.isChildModeEnabled()) apiResponse.setMessage("Детский режим выключен");
-            else apiResponse.setMessage("Детский режим включен");
-            user.setChildModeEnabled(!user.isChildModeEnabled());
-            update(user);
-            return apiResponse;
-        }
-        throw new BadCredentialsException("Неверный пароль");
-    }
-
-    public ApiResponse settingTwoFactorAuth(UpdateSettingsDTO updateSettingsDTO) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Не удалось настроить двухэтапную аутентификацию"));
-
-        if (passwordEncoder.matches(updateSettingsDTO.getPassword(), user.getPassword())) {
-            ApiResponse apiResponse = new ApiResponse(true, ""){};
-            if (user.isTwoFactorEnabled()) apiResponse.setMessage("Двухэтапная аутентификация выключена");
-            else apiResponse.setMessage("Двухэтапная аутентификация включена");
-
-            user.setTwoFactorEnabled(!user.isTwoFactorEnabled());
-            update(user);
-            return apiResponse;
-        }
-        throw new BadCredentialsException("Неверный пароль");
-    }
-
-    public void addBonuses(User user, int bonus){
-        return;
-    }
-
-    public void writeOffBonuses(User user, int bonus){
-        return;
-    }
-
-    public Optional<User> getByVkId(int vkId) {
-        return userRepository.findByVkId(vkId);
-    }
-
-
-    public ApiResponse containsInCart(int adId) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = getByUsername(userDetails.getUsername());
-        boolean isContain = user.getShoppingCart().getCartItems().stream()
-                .anyMatch(item -> item.getAd().getId() == adId);
-        if (isContain) {
-            return new ApiResponse(true, "Cart contain the ad") {};
-        } else {
-            return new ApiResponse(false, "Cart not contain the ad") {};
-        }
-    }
-
-    public ApiResponse topUpDeposit(int amount) throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = getByUsername(userDetails.getUsername());
-        if (user == null){
-            throw new UsernameNotFoundException("Пользователь не найден");
-        }
-        user.setDeposit(user.getDeposit() + amount);
-        return new ApiResponse(true,"Баланс пополнен"){};
     }
 
     public User getByEmail(String email) {

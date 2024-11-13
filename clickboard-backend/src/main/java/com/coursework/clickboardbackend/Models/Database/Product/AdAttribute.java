@@ -1,5 +1,7 @@
-package com.coursework.clickboardbackend.Models.Database.Ad;
+package com.coursework.clickboardbackend.Models.Database.Product;
 
+import com.coursework.clickboardbackend.Models.Database.Product.Ad;
+import com.coursework.clickboardbackend.Models.Database.Ad.Attribute;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

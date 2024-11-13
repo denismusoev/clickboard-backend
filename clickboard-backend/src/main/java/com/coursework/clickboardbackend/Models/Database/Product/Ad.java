@@ -1,7 +1,8 @@
-package com.coursework.clickboardbackend.Models.Database.Ad;
+package com.coursework.clickboardbackend.Models.Database.Product;
 
-import com.coursework.clickboardbackend.Models.DTO.Ad.AdNestedDTO;
-import com.coursework.clickboardbackend.Models.DTO.Ad.AdViewDTO;
+import com.coursework.clickboardbackend.Models.DTO.Product.AdNestedDTO;
+import com.coursework.clickboardbackend.Models.DTO.Product.AdViewDTO;
+import com.coursework.clickboardbackend.Models.Database.Ad.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -37,7 +38,7 @@ public class Ad {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private com.coursework.clickboardbackend.Models.Database.Ad.Category category;
 
     @OneToMany(mappedBy = "ad")
     private List<AdAttribute> adAttributes = new ArrayList<>();
@@ -48,21 +49,10 @@ public class Ad {
 
     public Ad(AdViewDTO adViewDTO) {
         this.id = adViewDTO.getId();
-//        this.description = adViewDTO.getDescription();
-//        this.rating = adViewDTO.getRating();
-//        this.image = adViewDTO.getImage();
-//        this.storeList = adViewDTO.getStoreList().stream().map(StoreItem::new).toList();
-//        this.discountList = adViewDTO.getDiscountList().stream().map(Discount::new).toList();
-//        this.categoryList = adViewDTO.getCategoryList().stream().map(Category::new).toList();
     }
 
     public Ad(AdNestedDTO adNestedDTO) {
         this.id = adNestedDTO.getId();
-//        this.name = adNestedDTO.getName();
-//        this.price = adNestedDTO.getId();
-//        this.description = adNestedDTO.getDescription();
-//        this.rating = adNestedDTO.getRating();
-//        this.image = adNestedDTO.getImage();
     }
 
     public int getId() {
@@ -113,7 +103,7 @@ public class Ad {
         this.image = image;
     }
 
-    public Category getCategory() {
+    public com.coursework.clickboardbackend.Models.Database.Ad.Category getCategory() {
         return category;
     }
 
@@ -128,21 +118,4 @@ public class Ad {
     public void setAdAttributes(List<AdAttribute> adAttributes) {
         this.adAttributes = adAttributes;
     }
-
-    //
-//    public List<CartItem> getCartItems() {
-//        return cartItems;
-//    }
-//
-//    public void setCartItems(List<CartItem> cartItems) {
-//        this.cartItems = cartItems;
-//    }
-//
-//    public void addToCartItems(CartItem cartItem) {
-//        this.cartItems.add(cartItem);
-//    }
-//
-//    public void removeFromCartItems(CartItem cartItem) {
-//        this.cartItems.removeIf(item -> item.getId() == cartItem.getId());
-//    }
 }

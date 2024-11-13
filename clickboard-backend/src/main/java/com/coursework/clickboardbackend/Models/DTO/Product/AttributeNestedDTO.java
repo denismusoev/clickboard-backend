@@ -1,6 +1,7 @@
-package com.coursework.clickboardbackend.Models.DTO.Ad;
+package com.coursework.clickboardbackend.Models.DTO.Product;
 
-import com.coursework.clickboardbackend.Models.Database.Ad.AdAttribute;
+
+import com.coursework.clickboardbackend.Models.Database.Product.AdAttribute;
 
 public class AttributeNestedDTO {
     private int id;

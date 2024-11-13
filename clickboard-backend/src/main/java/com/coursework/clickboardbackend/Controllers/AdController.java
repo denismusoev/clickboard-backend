@@ -1,7 +1,7 @@
 package com.coursework.clickboardbackend.Controllers;
 
 import com.coursework.clickboardbackend.Models.DTO.Ad.CategoryCompositeDTO;
-import com.coursework.clickboardbackend.Models.DTO.Ad.AdViewDTO;
+import com.coursework.clickboardbackend.Models.DTO.Product.AdViewDTO;
 import com.coursework.clickboardbackend.Services.AdService;
 import com.coursework.clickboardbackend.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

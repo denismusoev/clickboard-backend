@@ -10,11 +10,10 @@ public class UserTokenDTO extends ApiResponse {
     @JsonProperty("isVk")
     private boolean isVk;
 
-    public UserTokenDTO(String token, String username, boolean success, String message, boolean isChildModeEnabled, boolean isVk) {
+    public UserTokenDTO(String token, String username, boolean success, String message, boolean isVk) {
         super(success, message);
         this.token = token;
         this.username = username;
-        this.isChildModeEnabled = isChildModeEnabled;
         this.isVk = isVk;
     }
 

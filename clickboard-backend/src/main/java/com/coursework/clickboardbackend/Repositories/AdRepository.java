@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.Repositories;
 
-import com.coursework.clickboardbackend.Models.Database.Ad.Ad;
+import com.coursework.clickboardbackend.Models.Database.Product.Ad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

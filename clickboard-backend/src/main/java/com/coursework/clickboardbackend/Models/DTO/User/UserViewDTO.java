@@ -21,10 +21,6 @@ public class UserViewDTO {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.patronymic = user.getPatronymic();
-        this.deposit = user.getDeposit();
-        this.isTwoFactorEnabled = user.isTwoFactorEnabled();
-        this.isChildModeEnabled = user.isChildModeEnabled();
-        this.areNotificationsEnabled = user.isAreNotificationsEnabled();
     }
 
 
@@ -40,33 +36,14 @@ public class UserViewDTO {
         return patronymic;
     }
 
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-
     public float getDeposit() {
         return deposit;
     }
 
-//    public String getEmail() {
-//        return email;
-//    }
 
     public boolean isTwoFactorEnabled() {
         return isTwoFactorEnabled;
     }
-
-//    public String getTwoFactorCode() {
-//        return twoFactorCode;
-//    }
-
-//    public LocalDateTime getTwoFactorExpiration() {
-//        return twoFactorExpiration;
-//    }
 
     public boolean isChildModeEnabled() {
         return isChildModeEnabled;
@@ -75,13 +52,4 @@ public class UserViewDTO {
     public boolean isAreNotificationsEnabled() {
         return areNotificationsEnabled;
     }
-
-//    public ShoppingCart getShoppingCart() {
-//        return shoppingCart;
-//    }
-
-
-//    public List<NotificationDTO> getNotificationList() {
-//        return notificationList;
-//    }
 }

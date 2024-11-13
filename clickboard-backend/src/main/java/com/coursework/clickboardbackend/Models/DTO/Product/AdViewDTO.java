@@ -1,6 +1,7 @@
-package com.coursework.clickboardbackend.Models.DTO.Ad;
-
-import com.coursework.clickboardbackend.Models.Database.Ad.Ad;
+package com.coursework.clickboardbackend.Models.DTO.Product;
+import com.coursework.clickboardbackend.Models.DTO.Ad.CategoryCompositeDTO;
+import com.coursework.clickboardbackend.Models.Database.Product.Ad;
+import com.coursework.clickboardbackend.Models.DTO.Ad.CategoryCompositeDTO;
 
 import java.util.List;
 

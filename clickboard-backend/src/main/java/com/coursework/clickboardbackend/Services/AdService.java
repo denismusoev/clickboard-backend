@@ -1,7 +1,7 @@
 package com.coursework.clickboardbackend.Services;
 
 import com.coursework.clickboardbackend.Models.Database.Ad.Category;
-import com.coursework.clickboardbackend.Models.Database.Ad.Ad;
+import com.coursework.clickboardbackend.Models.Database.Product.Ad;
 import com.coursework.clickboardbackend.Repositories.CategoryRepository;
 import com.coursework.clickboardbackend.Repositories.AdRepository;
 import jakarta.transaction.Transactional;
