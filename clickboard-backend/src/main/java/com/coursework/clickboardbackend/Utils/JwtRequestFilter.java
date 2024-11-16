@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.Utils;
 
-import com.coursework.clickboardbackend.Services.UserService;
+import com.coursework.clickboardbackend.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
