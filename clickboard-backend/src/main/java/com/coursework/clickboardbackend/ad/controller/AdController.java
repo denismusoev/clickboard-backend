@@ -30,10 +30,12 @@ public class AdController {
     public ResponseEntity<Page<AdResponseDto>> getAds(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(adService.getAds(title, categoryId, PageRequest.of(page, size)));
+        return ResponseEntity.ok(adService.getAds(title, categoryId, minPrice, maxPrice, PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")

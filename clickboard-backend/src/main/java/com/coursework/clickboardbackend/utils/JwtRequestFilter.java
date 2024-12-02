@@ -1,4 +1,4 @@
-package com.coursework.clickboardbackend.Utils;
+package com.coursework.clickboardbackend.utils;
 
 import com.coursework.clickboardbackend.user.service.UserService;
 import jakarta.servlet.FilterChain;

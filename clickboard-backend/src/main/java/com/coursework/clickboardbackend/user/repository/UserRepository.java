@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.user.repository;
 
-import com.coursework.clickboardbackend.user.User;
+import com.coursework.clickboardbackend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

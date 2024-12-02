@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public abstract class ResponseDTO {
-    private boolean success;
-    private String message;
+public class UserTokenDto extends ResponseDto {
+    private String token;
+    private String username;
 }

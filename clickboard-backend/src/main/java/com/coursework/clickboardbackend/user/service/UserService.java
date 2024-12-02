@@ -1,8 +1,7 @@
 package com.coursework.clickboardbackend.user.service;
 
 import com.coursework.clickboardbackend.ad.service.AdService;
-import com.coursework.clickboardbackend.user.User;
-import com.coursework.clickboardbackend.user.dto.ResponseDTO;
+import com.coursework.clickboardbackend.user.model.User;
 import com.coursework.clickboardbackend.user.dto.SignupDto;
 import com.coursework.clickboardbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

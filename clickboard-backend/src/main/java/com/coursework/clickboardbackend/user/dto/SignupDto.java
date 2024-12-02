@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.user.dto;
 
-import com.coursework.clickboardbackend.user.User;
+import com.coursework.clickboardbackend.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

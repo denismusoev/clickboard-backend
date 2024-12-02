@@ -1,6 +1,6 @@
-package com.coursework.clickboardbackend.Configuration;
+package com.coursework.clickboardbackend.configuration;
 
-import com.coursework.clickboardbackend.Utils.JwtRequestFilter;
+import com.coursework.clickboardbackend.utils.JwtRequestFilter;
 import com.coursework.clickboardbackend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

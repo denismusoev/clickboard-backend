@@ -68,13 +68,16 @@ public class AdService {
         return mapToAdResponseDTO(ad);
     }
 
-    public Page<AdResponseDto> getAds(String title, Integer categoryId, Pageable pageable) {
+    public Page<AdResponseDto> getAds(String title, Integer categoryId, Integer minPrice, Integer maxPrice, Pageable pageable) {
         Specification<Ad> specification = Specification
-                .where(adSpecification.titleContains(title))
-                .and(adSpecification.categoryEquals(categoryId));
+                .where(adSpecification.titleStartsWith(title))
+                .and(adSpecification.categoryEquals(categoryId))
+                .and(adSpecification.priceGreaterThanOrEqual(minPrice))
+                .and(adSpecification.priceLessThanOrEqual(maxPrice));
 
         return adRepository.findAll(specification, pageable).map(this::mapToAdResponseDTO);
     }
+
 
     public AdResponseDto getAdById(int id) {
         Ad ad = adRepository.findById(id).orElseThrow();

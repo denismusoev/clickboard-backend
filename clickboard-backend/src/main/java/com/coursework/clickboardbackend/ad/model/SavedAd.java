@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.ad.model;
 
-import com.coursework.clickboardbackend.user.User;
+import com.coursework.clickboardbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

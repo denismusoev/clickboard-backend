@@ -1,6 +1,6 @@
-package com.coursework.clickboardbackend.user.Controller;
+package com.coursework.clickboardbackend.user.controller;
 
-import com.coursework.clickboardbackend.user.dto.ResponseDTO;
+import com.coursework.clickboardbackend.user.dto.ResponseDto;
 import com.coursework.clickboardbackend.user.dto.SigninDto;
 import com.coursework.clickboardbackend.user.dto.SignupDto;
 import com.coursework.clickboardbackend.user.service.AuthService;
@@ -29,27 +29,27 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> registerUser(@RequestBody SignupDto signUpDTO) {
+    public ResponseEntity<ResponseDto> registerUser(@RequestBody SignupDto signUpDTO) {
         userService.registerUser(signUpDTO);
-        return ResponseEntity.ok(new ResponseDTO(true, "Регистрация прошла успешно!") {
+        return ResponseEntity.ok(new ResponseDto(true, "Регистрация прошла успешно!") {
         });
     }
 
     @PostMapping("/authenticate")
-    public CompletableFuture<ResponseEntity<ResponseDTO>> authenticate(@RequestBody SigninDto request) {
-        return authService.authenticateUser(request)
-                .thenApply(ResponseEntity::ok)
-                .exceptionally(e -> {
-                    Throwable cause = e.getCause();
-                    if (cause instanceof BadCredentialsException) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, cause.getMessage()) {
-                        });
-                    } else {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(false, cause.getMessage()) {
-                        });
-                    }
+    public ResponseEntity<ResponseDto> authenticate(@RequestBody SigninDto request) {
+        try {
+            ResponseDto res = authService.authenticateUser(request);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof BadCredentialsException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(false, cause.getMessage()) {
                 });
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(false, cause.getMessage()) {
+                });
+            }
+        }
     }
-
 }
 

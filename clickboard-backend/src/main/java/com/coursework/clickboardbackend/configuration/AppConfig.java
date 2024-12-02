@@ -1,4 +1,4 @@
-package com.coursework.clickboardbackend.Configuration;
+package com.coursework.clickboardbackend.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
