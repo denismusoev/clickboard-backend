@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class Ad {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @ManyToOne

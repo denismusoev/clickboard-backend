@@ -9,6 +9,7 @@ import java.util.Map;
 @Data
 public class AdResponseDto {
     private int id;
+    private int userId;
     private String title;
     private String description;
     private double price;

@@ -1,4 +1,4 @@
-package com.coursework.clickboardbackend.attribute;
+package com.coursework.clickboardbackend.attribute.model;
 
 import com.coursework.clickboardbackend.category.Category;
 import jakarta.persistence.*;

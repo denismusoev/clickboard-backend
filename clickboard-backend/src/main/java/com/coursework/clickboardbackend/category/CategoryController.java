@@ -22,7 +22,6 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
-
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 }

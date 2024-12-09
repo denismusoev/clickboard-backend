@@ -1,6 +1,6 @@
 package com.coursework.clickboardbackend.ad.model;
 
-import com.coursework.clickboardbackend.attribute.Attribute;
+import com.coursework.clickboardbackend.attribute.model.Attribute;
 import jakarta.persistence.*;
 import lombok.Data;
 

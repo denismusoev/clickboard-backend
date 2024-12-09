@@ -3,14 +3,18 @@ package com.coursework.clickboardbackend.ad.controller;
 import com.coursework.clickboardbackend.ad.dto.AdRequestDto;
 import com.coursework.clickboardbackend.ad.dto.AdResponseDto;
 import com.coursework.clickboardbackend.ad.service.AdService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RestController
 @RequestMapping("/ads")
 public class AdController {
@@ -23,6 +27,7 @@ public class AdController {
 
     @PostMapping
     public ResponseEntity<AdResponseDto> createAd(@RequestBody AdRequestDto requestDTO) {
+        log.info("Данные объявления: {}", requestDTO);
         return ResponseEntity.ok(adService.createAd(requestDTO));
     }
 
