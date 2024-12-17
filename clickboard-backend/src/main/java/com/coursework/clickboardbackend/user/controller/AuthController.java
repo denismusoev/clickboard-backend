@@ -3,6 +3,7 @@ package com.coursework.clickboardbackend.user.controller;
 import com.coursework.clickboardbackend.user.dto.ResponseDto;
 import com.coursework.clickboardbackend.user.dto.SigninDto;
 import com.coursework.clickboardbackend.user.dto.SignupDto;
+import com.coursework.clickboardbackend.user.model.User;
 import com.coursework.clickboardbackend.user.service.AuthService;
 import com.coursework.clickboardbackend.user.service.UserService;
 import org.slf4j.Logger;
@@ -50,6 +51,12 @@ public class AuthController {
                 });
             }
         }
+    }
+
+    @PostMapping("/create-moderator")
+    public ResponseEntity<User> createModerator() {
+        User newModerator = userService.createModerator();
+        return ResponseEntity.ok(newModerator);
     }
 }
 

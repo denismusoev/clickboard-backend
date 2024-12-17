@@ -13,6 +13,7 @@ import com.coursework.clickboardbackend.ad.repostitory.AdRepository;
 import com.coursework.clickboardbackend.attribute.model.Attribute;
 import com.coursework.clickboardbackend.attribute.repository.AttributeRepository;
 import com.coursework.clickboardbackend.category.repository.CategoryRepository;
+import com.coursework.clickboardbackend.notification.NotificationService;
 import com.coursework.clickboardbackend.user.model.User;
 import com.coursework.clickboardbackend.user.repository.UserRepository;
 import org.apache.commons.io.FileUtils;
@@ -48,9 +49,10 @@ public class AdService {
     private final AdSpecification adSpecification;
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
+    private final NotificationService notificationService;
 
     public AdService(AdRepository adRepository, CategoryRepository categoryRepository,
-                     AdPhotoRepository adPhotoRepository, AttributeRepository attributeRepository, AdAttributeRepository adAttributeRepository, AdSpecification adSpecification, UserRepository userRepository, CloudinaryService cloudinaryService) {
+                     AdPhotoRepository adPhotoRepository, AttributeRepository attributeRepository, AdAttributeRepository adAttributeRepository, AdSpecification adSpecification, UserRepository userRepository, CloudinaryService cloudinaryService, NotificationService notificationService) {
         this.adRepository = adRepository;
         this.categoryRepository = categoryRepository;
         this.adPhotoRepository = adPhotoRepository;
@@ -59,6 +61,7 @@ public class AdService {
         this.adSpecification = adSpecification;
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -130,6 +133,8 @@ public class AdService {
             adPhotoRepository.save(photo);
         });
 
+        updateAdStatus(ad.getId(), Ad.Status.PENDING);
+
         return mapToAdResponseDTO(ad);
     }
 
@@ -138,10 +143,23 @@ public class AdService {
                 .where(adSpecification.titleStartsWith(title))
                 .and(adSpecification.categoryEquals(categoryId))
                 .and(adSpecification.priceGreaterThanOrEqual(minPrice))
-                .and(adSpecification.priceLessThanOrEqual(maxPrice));
+                .and(adSpecification.priceLessThanOrEqual(maxPrice))
+                .and(adSpecification.status(Ad.Status.APPROVED));
 
         return adRepository.findAll(specification, pageable).map(this::mapToAdResponseDTO);
     }
+
+    public Page<AdResponseDto> getUserAds(String username, Pageable pageable) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+
+        // Получаем объявления пользователя с пагинацией
+        Page<Ad> ads = adRepository.findByUserId(user.getId(), pageable);
+
+        return ads.map(this::mapToAdResponseDTO);
+    }
+
+
 
 
     public AdResponseDto getAdById(int id) {
@@ -149,27 +167,31 @@ public class AdService {
         return mapToAdResponseDTO(ad);
     }
 
-    public void approveAd(int id) {
-        Ad ad = updateAdStatus(id, Ad.Status.APPROVED);
-    }
+    public Ad updateAdStatus(int id, Ad.Status status) {
+        Ad ad = adRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ad not found with ID: " + id));
 
-    public void rejectAd(int id) {
-        Ad ad = updateAdStatus(id, Ad.Status.REJECTED);
-    }
-
-    public void blockAd(int id) {
-        Ad ad = updateAdStatus(id, Ad.Status.BLOCKED);
-    }
-
-    public void archiveAd(int id) {
-        Ad ad = updateAdStatus(id, Ad.Status.ARCHIVED);
-    }
-
-    private Ad updateAdStatus(int id, Ad.Status status) {
-        Ad ad = adRepository.findById(id).orElseThrow();
         ad.setStatus(status);
-        return adRepository.save(ad);
+        adRepository.save(ad);
+
+        // Создаем уведомление для пользователя
+        String message = generateModerationMessage(status);
+        notificationService.createNotification(ad.getUser(), ad, message);
+
+        return ad;
     }
+
+    private String generateModerationMessage(Ad.Status status) {
+        return switch (status) {
+            case APPROVED -> "Ваше объявление одобрено модератором.";
+            case REJECTED -> "Ваше объявление отклонено модератором.";
+            case BLOCKED -> "Ваше объявление заблокировано.";
+            case PENDING -> "Ваше объявление отправлено на проверку";
+            case ARCHIVED -> "Ваше объявление перенесено в архив";
+            default -> "Статус вашего объявления изменен";
+        };
+    }
+
 
     private AdResponseDto mapToAdResponseDTO(Ad ad) {
         AdResponseDto dto = new AdResponseDto();
@@ -181,7 +203,12 @@ public class AdService {
         dto.setPrice(ad.getPrice());
         dto.setStatus(ad.getStatus().name());
         dto.setCreatedAt(ad.getCreatedAt());
-        dto.setCategoryId(ad.getCategory().getId());
+        dto.setCategoryName(ad.getCategory().getName());
+
+        // Добавляем данные о продавце
+        dto.setSellerPhone(ad.getUser().getPhone());
+        dto.setSellerFirstName(ad.getUser().getFirstname());
+        dto.setSellerLastName(ad.getUser().getLastname());
 
         List<String> photoUrls = adPhotoRepository.findByAdId(ad.getId())
                 .stream()
@@ -199,5 +226,11 @@ public class AdService {
 
         return dto;
     }
+
+
+    public List<AdResponseDto> getAdsByStatus(Ad.Status status) {
+        return adRepository.findByStatus(status).stream().map(this::mapToAdResponseDTO).toList();
+    }
+
 }
 

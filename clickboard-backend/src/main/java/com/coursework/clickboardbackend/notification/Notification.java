@@ -25,5 +25,9 @@ public class Notification {
 
     private String message;
     private LocalDateTime createdAt;
+
+    @Column(name = "is_read")
+    private boolean isRead = false; // Новое уведомление по умолчанию
 }
+
 

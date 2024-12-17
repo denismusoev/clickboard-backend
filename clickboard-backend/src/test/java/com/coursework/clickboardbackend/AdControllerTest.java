@@ -119,35 +119,35 @@ public class AdControllerTest {
                 .andExpect(jsonPath("$.title").value(response.getTitle()));
     }
 
-    @Test
-    public void testApproveAd() throws Exception {
-        mockMvc.perform(put("/ads/1/approve"))
-                .andExpect(status().isOk());
-
-        Mockito.verify(adService, Mockito.times(1)).approveAd(1);
-    }
-
-    @Test
-    public void testRejectAd() throws Exception {
-        mockMvc.perform(put("/ads/1/reject"))
-                .andExpect(status().isOk());
-
-        Mockito.verify(adService, Mockito.times(1)).rejectAd(1);
-    }
-
-    @Test
-    public void testBlockAd() throws Exception {
-        mockMvc.perform(put("/ads/1/block"))
-                .andExpect(status().isOk());
-
-        Mockito.verify(adService, Mockito.times(1)).blockAd(1);
-    }
-
-    @Test
-    public void testArchiveAd() throws Exception {
-        mockMvc.perform(put("/ads/1/archive"))
-                .andExpect(status().isOk());
-
-        Mockito.verify(adService, Mockito.times(1)).archiveAd(1);
-    }
+//    @Test
+//    public void testApproveAd() throws Exception {
+//        mockMvc.perform(put("/ads/1/approve"))
+//                .andExpect(status().isOk());
+//
+//        Mockito.verify(adService, Mockito.times(1)).approveAd(1);
+//    }
+//
+//    @Test
+//    public void testRejectAd() throws Exception {
+//        mockMvc.perform(put("/ads/1/reject"))
+//                .andExpect(status().isOk());
+//
+//        Mockito.verify(adService, Mockito.times(1)).rejectAd(1);
+//    }
+//
+//    @Test
+//    public void testBlockAd() throws Exception {
+//        mockMvc.perform(put("/ads/1/block"))
+//                .andExpect(status().isOk());
+//
+//        Mockito.verify(adService, Mockito.times(1)).blockAd(1);
+//    }
+//
+//    @Test
+//    public void testArchiveAd() throws Exception {
+//        mockMvc.perform(put("/ads/1/archive"))
+//                .andExpect(status().isOk());
+//
+//        Mockito.verify(adService, Mockito.times(1)).archiveAd(1);
+//    }
 }

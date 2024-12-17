@@ -15,8 +15,12 @@ public class AdResponseDto {
     private double price;
     private String status;
     private LocalDateTime createdAt;
-    private int categoryId;
+    private String categoryName;
     private List<String> photoUrls;
     private Map<String, String> attributes;
+
+    private String sellerPhone;
+    private String sellerFirstName;
+    private String sellerLastName;
 }
 

@@ -30,5 +30,9 @@ public class AdSpecification {
                 maxPrice == null ? null : criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
     }
 
+    public Specification<Ad> status(Ad.Status status) {
+        return (root, query, criteriaBuilder) ->
+                status == null ? null : criteriaBuilder.equal(root.get("status"), status);
+    }
 }
 

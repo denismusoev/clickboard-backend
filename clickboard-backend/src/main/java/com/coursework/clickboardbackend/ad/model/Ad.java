@@ -2,8 +2,11 @@ package com.coursework.clickboardbackend.ad.model;
 
 import com.coursework.clickboardbackend.category.Category;
 import com.coursework.clickboardbackend.user.model.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,9 +25,12 @@ public class Ad {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonManagedReference
     private Category category;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<AdAttribute> adAttributes;
 
     private String title;
