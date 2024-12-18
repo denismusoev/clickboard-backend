@@ -3,6 +3,7 @@ package com.coursework.clickboardbackend.ad.controller;
 import com.coursework.clickboardbackend.ad.dto.AdRequestDto;
 import com.coursework.clickboardbackend.ad.dto.AdResponseDto;
 import com.coursework.clickboardbackend.ad.model.Ad;
+import com.coursework.clickboardbackend.ad.model.SavedAd;
 import com.coursework.clickboardbackend.ad.service.AdService;
 import com.coursework.clickboardbackend.user.model.User;
 import com.coursework.clickboardbackend.user.service.UserService;
@@ -16,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.GrantedAuthority;
@@ -60,7 +63,6 @@ public class AdController {
         return ResponseEntity.ok(pendingAds);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<AdResponseDto> getAdById(@PathVariable int id) throws Exception {
         AdResponseDto ad = adService.getAdById(id);
@@ -86,7 +88,6 @@ public class AdController {
 
         return ResponseEntity.ok(ad);
     }
-
 
     @PostMapping("/test-notification")
     public void testNotification(@RequestParam String username) {
@@ -121,6 +122,14 @@ public class AdController {
         return ResponseEntity.ok(userAds);
     }
 
-
+    @PutMapping("/{id}")
+    public ResponseEntity<AdResponseDto> updateAd(
+            @PathVariable int id,
+            @RequestBody AdRequestDto requestDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        AdResponseDto updatedAd = adService.updateAd(id, requestDTO, username);
+        return ResponseEntity.ok(updatedAd);
+    }
 }
 

@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface AdAttributeRepository extends JpaRepository<AdAttribute, Integer> {
     List<AdAttribute> findByAdId(int adId);
+    void deleteByAdId(int adId); // Удаление всех атрибутов для указанного объявления
 }
 
 

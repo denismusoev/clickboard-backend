@@ -48,7 +48,7 @@ public class AuthService {
             }
             user = userService.getByUsername(request.getUsername());
             userDetails = userService.loadUserByUsername(user.getUsername());
-            return new UserTokenDto(jwtUtil.generateToken(userDetails), user.getUsername());
+            return new UserTokenDto(jwtUtil.generateToken(userDetails), user.getUsername(), user.getRole().toString());
         } catch (Exception e) {
             throw new CompletionException(new BadCredentialsException(e.getMessage()));
         }

@@ -14,5 +14,6 @@ public class AdRequestDto {
     private int categoryId;
     private Map<String, String> attributes;
     private List<String> photos;
+    private List<String> currentPhotos;
 }
 

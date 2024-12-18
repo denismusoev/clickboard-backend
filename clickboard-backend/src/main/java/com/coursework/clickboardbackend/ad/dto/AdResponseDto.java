@@ -16,11 +16,14 @@ public class AdResponseDto {
     private String status;
     private LocalDateTime createdAt;
     private String categoryName;
+    private int categoryId;
     private List<String> photoUrls;
     private Map<String, String> attributes;
 
     private String sellerPhone;
     private String sellerFirstName;
     private String sellerLastName;
+    private boolean isOwnedByCurrentUser;
+    private boolean isSaved;
 }
 

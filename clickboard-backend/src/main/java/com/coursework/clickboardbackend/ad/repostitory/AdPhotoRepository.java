@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface AdPhotoRepository extends JpaRepository<AdPhoto, Integer> {
     List<AdPhoto> findByAdId(int adId);
+    void deleteByAdId(int adId); // Удаление всех фотографий для указанного объявления
 }
 

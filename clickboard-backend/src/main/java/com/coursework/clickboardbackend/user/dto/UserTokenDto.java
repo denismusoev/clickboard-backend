@@ -12,4 +12,5 @@ import lombok.Setter;
 public class UserTokenDto extends ResponseDto {
     private String token;
     private String username;
+    private String role;
 }
