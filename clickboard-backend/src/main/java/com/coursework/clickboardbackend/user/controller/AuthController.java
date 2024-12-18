@@ -41,15 +41,13 @@ public class AuthController {
         try {
             ResponseDto res = authService.authenticateUser(request);
             return ResponseEntity.ok(res);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDto(false, e.getMessage()){});
         } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof BadCredentialsException) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(false, cause.getMessage()) {
-                });
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(false, cause.getMessage()) {
-                });
-            }
+            String errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(false, errorMessage){});
         }
     }
 

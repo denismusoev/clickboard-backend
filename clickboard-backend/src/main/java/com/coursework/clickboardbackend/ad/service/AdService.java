@@ -80,7 +80,6 @@ public class AdService {
         ad.setCategory(categoryRepository.findById(requestDTO.getCategoryId()).orElseThrow());
         ad.setStatus(Ad.Status.PENDING);
         ad.setCreatedAt(LocalDateTime.now());
-        ad = adRepository.save(ad);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -100,6 +99,8 @@ public class AdService {
         }
 
         ad.setUser(user);
+
+        ad = adRepository.save(ad);
 
         // Добавление атрибутов
         Ad finalAd = ad;

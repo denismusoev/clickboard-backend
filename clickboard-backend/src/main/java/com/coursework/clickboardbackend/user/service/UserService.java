@@ -49,6 +49,8 @@ public class UserService implements UserDetailsService {
         newUser.setFirstname(signUpDTO.getFirstname());
         newUser.setLastname(signUpDTO.getLastname());
         newUser.setUsername(signUpDTO.getUsername());
+        newUser.setPhone(signUpDTO.getPhone());
+        newUser.setRole(User.Role.USER);
         newUser.setPassword(new BCryptPasswordEncoder().encode(signUpDTO.getPassword()));
         userRepository.save(newUser);
     }
@@ -118,6 +120,10 @@ public class UserService implements UserDetailsService {
     public User createModerator() {
         User moderator = new User();
         moderator.setUsername("admin");
+        moderator.setEmail("admin@mail.ru");
+        moderator.setFirstname("admin");
+        moderator.setLastname("admin");
+        moderator.setPhone("890215151356");
         moderator.setPassword(passwordEncoder.encode("admin"));
         moderator.setRole(User.Role.ADMIN);
 

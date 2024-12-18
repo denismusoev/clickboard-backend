@@ -1,153 +1,236 @@
 package com.coursework.clickboardbackend;
 
+import com.coursework.clickboardbackend.ad.controller.AdController;
 import com.coursework.clickboardbackend.ad.dto.AdRequestDto;
 import com.coursework.clickboardbackend.ad.dto.AdResponseDto;
+import com.coursework.clickboardbackend.ad.model.Ad;
 import com.coursework.clickboardbackend.ad.service.AdService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.coursework.clickboardbackend.user.model.User;
+import com.coursework.clickboardbackend.user.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class AdControllerTest {
+class AdControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private AdController adController;
 
-    @MockBean
+    @Mock
     private AdService adService;
 
-    @Test
-    public void testCreateAd() throws Exception {
-        AdRequestDto request = new AdRequestDto();
-        request.setTitle("Test Ad");
-        request.setDescription("Test Description");
-        request.setPrice(100.0);
-        request.setCategoryId(1);
-        request.setAttributes(Map.of("color", "red"));
+    @Mock
+    private UserService userService;
 
-        AdResponseDto response = new AdResponseDto();
-        response.setId(1);
-        response.setUserId(1);
-        response.setTitle(request.getTitle());
-        response.setDescription(request.getDescription());
-        response.setPrice(request.getPrice());
-        response.setStatus("ACTIVE");
-        response.setCreatedAt(LocalDateTime.now());
-        response.setCategoryId(request.getCategoryId());
-        response.setPhotoUrls(List.of("url1", "url2"));
-        response.setAttributes(request.getAttributes());
+    @Mock
+    private SimpMessagingTemplate messagingTemplate;
 
-        Mockito.when(adService.createAd(Mockito.any(AdRequestDto.class))).thenReturn(response);
+    @Mock
+    private SecurityContext securityContext;
 
-        mockMvc.perform(post("/ads")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(response.getId()))
-                .andExpect(jsonPath("$.title").value(response.getTitle()))
-                .andExpect(jsonPath("$.price").value(response.getPrice()));
+    @Mock
+    private Authentication authentication;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
     }
 
     @Test
-    public void testGetAds() throws Exception {
-        AdResponseDto response = new AdResponseDto();
-        response.setId(1);
-        response.setUserId(1);
-        response.setTitle("Test Ad");
-        response.setDescription("Test Description");
-        response.setPrice(100.0);
-        response.setStatus("ACTIVE");
-        response.setCreatedAt(LocalDateTime.now());
-        response.setCategoryId(1);
-        response.setPhotoUrls(List.of("url1", "url2"));
-        response.setAttributes(Map.of("color", "red"));
+    void testCreateAd() {
+        // Arrange
+        AdRequestDto requestDto = new AdRequestDto();
+        AdResponseDto responseDto = new AdResponseDto();
+        when(adService.createAd(any(AdRequestDto.class))).thenReturn(responseDto);
 
-        Page<AdResponseDto> pageResponse = new PageImpl<>(List.of(response));
-        Mockito.when(adService.getAds(Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(Pageable.class)))
-                .thenReturn(pageResponse);
+        // Act
+        ResponseEntity<AdResponseDto> response = adController.createAd(requestDto);
 
-        mockMvc.perform(get("/ads")
-                        .param("title", "Test")
-                        .param("categoryId", "1")
-                        .param("minPrice", "50")
-                        .param("maxPrice", "200")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(response.getId()))
-                .andExpect(jsonPath("$.content[0].title").value(response.getTitle()))
-                .andExpect(jsonPath("$.content[0].price").value(response.getPrice()));
+        // Assert
+        assertNotNull(response);
+        assertEquals(responseDto, response.getBody());
+        verify(adService, times(1)).createAd(any(AdRequestDto.class));
     }
 
     @Test
-    public void testGetAdById() throws Exception {
-        AdResponseDto response = new AdResponseDto();
-        response.setId(1);
-        response.setUserId(1);
-        response.setTitle("Test Ad");
-        response.setDescription("Test Description");
-        response.setPrice(100.0);
-        response.setStatus("ACTIVE");
-        response.setCreatedAt(LocalDateTime.now());
-        response.setCategoryId(1);
-        response.setPhotoUrls(List.of("url1", "url2"));
-        response.setAttributes(Map.of("color", "red"));
+    void testGetAds() {
+        // Arrange
+        Page<AdResponseDto> page = new PageImpl<>(Collections.emptyList());
+        when(adService.getAds(any(), any(), any(), any(), any(PageRequest.class))).thenReturn(page);
 
-        Mockito.when(adService.getAdById(1)).thenReturn(response);
+        // Act
+        ResponseEntity<Page<AdResponseDto>> response = adController.getAds(null, null, null, null, 0, 10);
 
-        mockMvc.perform(get("/ads/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(response.getId()))
-                .andExpect(jsonPath("$.title").value(response.getTitle()));
+        // Assert
+        assertNotNull(response);
+        assertEquals(page, response.getBody());
+        verify(adService, times(1)).getAds(any(), any(), any(), any(), any(PageRequest.class));
     }
 
-//    @Test
-//    public void testApproveAd() throws Exception {
-//        mockMvc.perform(put("/ads/1/approve"))
-//                .andExpect(status().isOk());
-//
-//        Mockito.verify(adService, Mockito.times(1)).approveAd(1);
-//    }
-//
-//    @Test
-//    public void testRejectAd() throws Exception {
-//        mockMvc.perform(put("/ads/1/reject"))
-//                .andExpect(status().isOk());
-//
-//        Mockito.verify(adService, Mockito.times(1)).rejectAd(1);
-//    }
-//
-//    @Test
-//    public void testBlockAd() throws Exception {
-//        mockMvc.perform(put("/ads/1/block"))
-//                .andExpect(status().isOk());
-//
-//        Mockito.verify(adService, Mockito.times(1)).blockAd(1);
-//    }
-//
-//    @Test
-//    public void testArchiveAd() throws Exception {
-//        mockMvc.perform(put("/ads/1/archive"))
-//                .andExpect(status().isOk());
-//
-//        Mockito.verify(adService, Mockito.times(1)).archiveAd(1);
-//    }
+    @Test
+    void testGetPendingAds() {
+        // Arrange
+        List<AdResponseDto> pendingAds = List.of(new AdResponseDto());
+        when(adService.getAdsByStatus(Ad.Status.PENDING)).thenReturn(pendingAds);
+
+        // Act
+        ResponseEntity<List<AdResponseDto>> response = adController.getPendingAds();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(pendingAds, response.getBody());
+        verify(adService, times(1)).getAdsByStatus(Ad.Status.PENDING);
+    }
+
+    @Test
+    void testGetAdById_AsAdminOrOwner() throws Exception {
+        // Arrange
+        int adId = 1;
+        AdResponseDto adResponse = new AdResponseDto();
+        adResponse.setUserId(1);
+        adResponse.setStatus("APPROVED");
+        User user = new User();
+        user.setId(1);
+
+        when(authentication.getName()).thenReturn("user");
+        when(userService.getByUsername("user")).thenReturn(user);
+        when(adService.getAdById(adId)).thenReturn(adResponse);
+
+        // Act
+        ResponseEntity<AdResponseDto> response = adController.getAdById(adId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(adResponse, response.getBody());
+        verify(adService, times(1)).getAdById(adId);
+    }
+
+    @Test
+    void testGetAdById_AccessDenied() throws Exception {
+        // Arrange
+        int adId = 1;
+        AdResponseDto adResponse = new AdResponseDto();
+        adResponse.setUserId(2);
+        adResponse.setStatus("PENDING");
+        User user = new User();
+        user.setId(1);
+
+        when(authentication.getName()).thenReturn("user");
+        when(userService.getByUsername("user")).thenReturn(user);
+        when(adService.getAdById(adId)).thenReturn(adResponse);
+
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> adController.getAdById(adId));
+    }
+
+    @Test
+    void testTestNotification() {
+        // Arrange
+        String username = "testUser";
+
+        // Act
+        adController.testNotification(username);
+
+        // Assert
+        verify(messagingTemplate, times(1)).convertAndSendToUser(eq(username), eq("/queue/messages"), eq("Test message"));
+    }
+
+    @Test
+    void testModerateAd_ShouldUpdateAdStatus() {
+        // Arrange
+        int adId = 1;
+        Ad.Status status = Ad.Status.APPROVED;
+        Ad ad = new Ad();
+        ad.setId(adId);
+        ad.setStatus(status);
+
+        // Мокируем поведение adService
+        when(adService.updateAdStatus(eq(adId), eq(status))).thenReturn(ad);
+
+        // Act
+        ResponseEntity<Void> response = adController.moderateAd(adId, status);
+
+        // Assert
+        assertEquals(200, response.getStatusCodeValue());
+        verify(adService).updateAdStatus(adId, status);
+    }
+
+
+
+    @Test
+    void testArchiveAd_ShouldArchiveAd() {
+        // Arrange
+        int adId = 1;
+        Ad.Status status = Ad.Status.ARCHIVED;
+        Ad ad = new Ad();
+        ad.setId(adId);
+        ad.setStatus(status);
+
+        // Мокируем поведение adService
+        when(adService.updateAdStatus(eq(adId), eq(status))).thenReturn(ad);
+
+        // Act
+        ResponseEntity<Void> response = adController.archiveAd(adId);
+
+        // Assert
+        assertEquals(200, response.getStatusCodeValue());
+        verify(adService).updateAdStatus(adId, status);
+    }
+
+
+    @Test
+    void testGetUserAds() {
+        // Arrange
+        Page<AdResponseDto> page = new PageImpl<>(Collections.emptyList());
+        when(authentication.getName()).thenReturn("user");
+        when(adService.getUserAds("user", PageRequest.of(0, 10))).thenReturn(page);
+
+        // Act
+        ResponseEntity<Page<AdResponseDto>> response = adController.getUserAds(0, 10);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(page, response.getBody());
+        verify(adService, times(1)).getUserAds("user", PageRequest.of(0, 10));
+    }
+
+    @Test
+    void testUpdateAd() {
+        // Arrange
+        int adId = 1;
+        AdRequestDto requestDto = new AdRequestDto();
+        AdResponseDto responseDto = new AdResponseDto();
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn("user");
+        when(adService.updateAd(eq(adId), any(AdRequestDto.class), eq("user"))).thenReturn(responseDto);
+
+        // Act
+        ResponseEntity<AdResponseDto> response = adController.updateAd(adId, requestDto, userDetails);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(responseDto, response.getBody());
+        verify(adService, times(1)).updateAd(eq(adId), any(AdRequestDto.class), eq("user"));
+    }
 }
