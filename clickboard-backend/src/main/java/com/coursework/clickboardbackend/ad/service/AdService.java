@@ -135,6 +135,12 @@ public class AdService {
             }
         }
 
+        if (!photoUrls.isEmpty()) {
+            AdPhoto photo = new AdPhoto();
+            photo.setPhotoUrl("https://res.cloudinary.com/dionvmulc/image/upload/v1734510457/9044950_no_image_icon_glykxw.png");
+            photo.setAd(finalAd);
+            adPhotoRepository.save(photo);
+        }
         photoUrls.forEach(photoUrl -> {
             AdPhoto photo = new AdPhoto();
             photo.setPhotoUrl(photoUrl);
